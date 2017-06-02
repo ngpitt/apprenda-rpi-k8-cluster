@@ -9,5 +9,9 @@ sudo dpkg-reconfigure tzdata
 sudo cp basic_auth.csv /etc/kubernetes/
 sudo cp abac_policy.json /etc/kubernetes/
 sudo kubeadm init --config config.yaml
-sudo kubectl apply -f weave-kube.yaml
-sudo kubectl apply -f blinkt-k8s-controller-ds.yaml
+sudo cp /etc/kubernetes/admin.conf $HOME/
+sudo chown $(id -u):$(id -g) $HOME/admin.conf
+export KUBECONFIG=$HOME/admin.conf
+echo "export KUBECONFIG=\$HOME/admin.conf" >> ~/.bashrc
+kubectl apply -f weave-kube.yaml
+kubectl apply -f blinkt-k8s-controller-ds.yaml
