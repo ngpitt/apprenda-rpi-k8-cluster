@@ -7,5 +7,4 @@ sudo cp /etc/kubernetes/admin.conf $HOME/
 sudo chown $(id -u):$(id -g) $HOME/admin.conf
 export KUBECONFIG=$HOME/admin.conf
 echo "export KUBECONFIG=\$HOME/admin.conf" >> ~/.bashrc
-kubectl apply -f weave-kube.yaml
-kubectl apply -f blinkt-k8s-controller-ds.yaml
+kubectl apply -f weave-kube-1.6.yaml
