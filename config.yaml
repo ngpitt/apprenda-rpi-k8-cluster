@@ -1,5 +1,7 @@
 apiVersion: kubeadm.k8s.io/v1alpha1
 kind: MasterConfiguration
-authorizationMode: "ABAC"
+authorizationModes:
+- RBAC
+- ABAC
 apiServerExtraArgs:
   basic-auth-file: /etc/kubernetes/basic_auth.csv
