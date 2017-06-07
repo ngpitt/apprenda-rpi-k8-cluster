@@ -5,32 +5,32 @@ sudo apt-get update
 sudo apt-get install -y pssh haveged
 
 echo "Setting up SSH directories..."
-parallel-ssh -i -h all-nodes.txt -A -O StrictHostKeyChecking=no 'mkdir ~/.ssh'
+parallel-ssh -i -h all-nodes.txt -A -O StrictHostKeyChecking=no 'mkdir -p ~/.ssh'
 
 echo "Generating SSH key..."
 mkdir ~/.ssh
 ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ""
 
 echo "Installing public key..."
-parallel-scp -h worker-nodes.txt -A -O StrictHostKeyChecking=no ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
+parallel-scp -h all-nodes.txt -A -O StrictHostKeyChecking=no ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
 
 echo "Installing Kubernetes dependencies..."
 parallel-ssh -i -h all-nodes.txt -O StrictHostKeyChecking=no -t 600 'sudo apt-get update &&
-sudo apt-get upgrade &&
+sudo apt-get upgrade -y &&
 sudo apt-get install -y ntp haveged ebtables socat'
 
 echo "Installing Kubernetes package sources..."
 parallel-ssh -i -h all-nodes.txt -O StrictHostKeyChecking=no -t 600 'curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - &&
-sudo echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list &&
+sudo bash -c 'echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list' &&
 sudo apt-get update'
 
 echo "Installing Kubernetes..."
 parallel-ssh -i -h all-nodes.txt -O StrictHostKeyChecking=no -t 600 'cd /tmp &&
-wget https://raw.githubusercontent.com/ngpitt/apprenda-rpi-k8-cluster/master/kubeadm_1.7.0-alpha.4-00_armhf.deb &&
-wget https://raw.githubusercontent.com/ngpitt/apprenda-rpi-k8-cluster/master/kubectl_1.7.0-alpha.4-00_armhf.deb &&
-wget https://raw.githubusercontent.com/ngpitt/apprenda-rpi-k8-cluster/master/kubelet_1.7.0-alpha.4-00_armhf.deb &&
-wget https://raw.githubusercontent.com/ngpitt/apprenda-rpi-k8-cluster/master/kubernetes-cni_0.5.1-00_armhf.deb &&
-sudo dpkg -i kubeadm_1.7.0-alpha.4-00_armhf.deb kubectl_1.7.0-alpha.4-00_armhf.deb kubelet_1.7.0-alpha.4-00_armhf.deb kubernetes-cni_0.5.1-00_armhf.deb'
+wget -O kubeadm.deb https://github.com/ngpitt/apprenda-rpi-k8-cluster/raw/master/kubeadm_1.7.0-alpha.4-00_armhf.deb &&
+wget -O kubectl.deb https://github.com/ngpitt/apprenda-rpi-k8-cluster/raw/master/kubectl_1.7.0-alpha.4-00_armhf.deb &&
+wget -O kubelet.deb https://github.com/ngpitt/apprenda-rpi-k8-cluster/raw/master/kubelet_1.7.0-alpha.4-00_armhf.deb &&
+wget -O kubernetes-cni.deb https://github.com/ngpitt/apprenda-rpi-k8-cluster/raw/master/kubernetes-cni_0.5.1-00_armhf.deb &&
+sudo dpkg -i kubeadm.deb kubectl.deb kubelet.deb kubernetes-cni.deb'
 
 #sudo apt-get install -y kubeadm kubectl kubelet kubernetes-cni
 
