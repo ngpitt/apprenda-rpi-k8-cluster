@@ -62,9 +62,9 @@ do
 done
 
 echo "
-Joining nodes to the cluster..."
+Joining workers to the cluster..."
 TOKEN=$(sudo kubeadm token list | tail -n 1 | awk '{print $1}')
-URL=$(kubectl cluster-info | head -n 1 | awk '{print $6}' | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g")
+URL=$(kubectl cluster-info | head -n 1 | awk '{print $6}' | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" | cut -d "/" -f 3)
 parallel-ssh -i -h worker-nodes.txt -O StrictHostKeyChecking=no -t 600 "sudo kubeadm reset
 sudo kubeadm join --token $TOKEN $URL"
 
