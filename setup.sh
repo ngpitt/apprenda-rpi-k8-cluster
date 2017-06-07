@@ -87,6 +87,10 @@ kubectl apply -f traefik-rbac.yaml
 kubectl apply -f traefik.yaml
 
 echo "
+Setting up nginx ingress..."
+kubectl apply -f nginx.yaml
+
+echo "
 Run \"kubectl label node <node> nginx-controller=traefik\" to create a load balancer node
 Install /etc/kubernetes/pki/ca.crt on all Apprenda management nodes
 "
