@@ -71,5 +71,5 @@ echo "Setting up Traefik.."
 kubectl apply -f traefik-rbac.yaml
 kubectl apply -f traefik.yaml
 
-echo "Run 'kubectl label <node> nginx-controller=traefik' to create a load balancer node"
-echo "Setup complete."
+echo "Run 'kubectl label <node> nginx-controller=traefik' to create a load balancer node
+Install /etc/kubernetes/pki/ca.crt on all Apprenda management nodes"
