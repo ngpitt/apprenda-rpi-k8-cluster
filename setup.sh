@@ -88,7 +88,7 @@ kubectl apply -f traefik.yaml
 
 echo "
 Setting up nginx ingress..."
-kubectl apply -f nginx.yaml
+kubectl apply -f nginx-ingress.yaml
 
 echo "
 Run \"kubectl label node <node> nginx-controller=traefik\" to create a load balancer node
