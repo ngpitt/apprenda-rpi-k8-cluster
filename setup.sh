@@ -2,8 +2,8 @@
 
 echo "
 Installing pssh..."
-sudo apt-get update
-sudo apt-get install -y pssh haveged
+sudo apt update
+sudo apt install -y pssh haveged
 
 echo "
 Generating SSH key..."
@@ -17,16 +17,16 @@ echo \"$(cat ~/.ssh/id_rsa.pub)\" > ~/.ssh/authorized_keys"
 
 echo "
 Installing Kubernetes dependencies..."
-parallel-ssh -i -h all-nodes.txt -O StrictHostKeyChecking=no -t 600 "sudo apt-get update
-sudo apt-get upgrade -y
-sudo apt-get install -y ntp haveged ebtables socat"
+parallel-ssh -i -h all-nodes.txt -O StrictHostKeyChecking=no -t 600 "sudo apt update
+sudo apt upgrade -y
+sudo apt install -y ntp haveged ebtables socat"
 
 echo "
 Installing Kubernetes package sources..."
 parallel-ssh -i -h all-nodes.txt -O StrictHostKeyChecking=no -t 600 "curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 sudo bash -c \"echo \\\"deb http://apt.kubernetes.io/ kubernetes-xenial main\\\" > /etc/apt/sources.list.d/kubernetes.list\"
-sudo apt-get update"
-#sudo apt-get install -y kubeadm kubectl kubelet kubernetes-cni
+sudo apt update"
+#sudo apt install -y kubeadm kubectl kubelet kubernetes-cni
 
 echo "
 Downloading Kubernetes..."
@@ -49,8 +49,6 @@ sudo cp abac_policy.json /etc/kubernetes/
 sudo kubeadm init --config config.yaml
 sudo cp /etc/kubernetes/admin.conf $HOME/.kubeconfig
 sudo chown $(id -u):$(id -g) $HOME/.kubeconfig
-echo "export KUBECONFIG=\$HOME/.kubeconfig" >> ~/.bashrc
-. ~/.bashrc
 kubectl apply -f weave-kube-1.6.yaml
 
 echo "
