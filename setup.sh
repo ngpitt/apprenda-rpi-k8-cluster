@@ -1,45 +1,10 @@
 #!/bin/bash
 
 echo "
-Installing pssh..."
-sudo apt update
-sudo apt install -y pssh haveged
-
-echo "
-Generating SSH key..."
-mkdir -p ~/.ssh
-ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ""
-
-echo "
-Installing public key..."
-parallel-ssh -i -h all-nodes.txt -A -O StrictHostKeyChecking=no "mkdir -p ~/.ssh
-echo \"$(cat ~/.ssh/id_rsa.pub)\" > ~/.ssh/authorized_keys"
-
-echo "
-Installing Kubernetes dependencies..."
-parallel-ssh -i -h all-nodes.txt -O StrictHostKeyChecking=no -t 600 "sudo apt update
-sudo apt upgrade -y
-sudo apt install -y ntp haveged ebtables socat"
-
-echo "
-Installing Kubernetes package sources..."
-parallel-ssh -i -h all-nodes.txt -O StrictHostKeyChecking=no -t 600 "curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-sudo bash -c \"echo \\\"deb http://apt.kubernetes.io/ kubernetes-xenial main\\\" > /etc/apt/sources.list.d/kubernetes.list\"
-sudo apt update"
-#sudo apt install -y kubeadm kubectl kubelet kubernetes-cni
-
-echo "
-Downloading Kubernetes..."
-wget -O /tmp/kubeadm.deb https://github.com/ngpitt/apprenda-rpi-k8-cluster/raw/master/kubeadm_1.7.0-alpha.4-00_armhf.deb
-wget -O /tmp/kubectl.deb https://github.com/ngpitt/apprenda-rpi-k8-cluster/raw/master/kubectl_1.7.0-alpha.4-00_armhf.deb
-wget -O /tmp/kubelet.deb https://github.com/ngpitt/apprenda-rpi-k8-cluster/raw/master/kubelet_1.7.0-alpha.4-00_armhf.deb
-wget -O /tmp/kubernetes-cni.deb https://github.com/ngpitt/apprenda-rpi-k8-cluster/raw/master/kubernetes-cni_0.5.1-00_armhf.deb
-parallel-scp -h worker-nodes.txt -O StrictHostKeyChecking=no /tmp/kube*.deb /tmp
-
-echo "
 Installing Kubernetes..."
-parallel-ssh -i -h all-nodes.txt -O StrictHostKeyChecking=no -t 600 "cd /tmp
-sudo dpkg -i kubeadm.deb kubectl.deb kubelet.deb kubernetes-cni.deb"
+cp kube*.deb /tmp
+parallel-scp -h worker-nodes.txt -O StrictHostKeyChecking=no /tmp/kube*.deb /tmp
+parallel-ssh -i -h all-nodes.txt -O StrictHostKeyChecking=no -t 600 "sudo dpkg -i /tmp/kube*.deb"
 
 echo "
 Setting up Kubernetes..."
@@ -49,7 +14,8 @@ sudo cp abac_policy.json /etc/kubernetes/
 sudo kubeadm init --config config.yaml
 sudo cp /etc/kubernetes/admin.conf $HOME/.kubeconfig
 sudo chown $(id -u):$(id -g) $HOME/.kubeconfig
-kubectl apply -f weave-kube-1.6.yaml
+kubectl apply -f kube-flannel-rbac.yaml
+kubectl apply -f kube-clannel.yaml
 
 echo "
 Waiting for Kubernetes DNS..."

@@ -3,5 +3,7 @@ kind: MasterConfiguration
 authorizationModes:
 - RBAC
 - ABAC
+networking:
+  podSubnet: 10.244.0.0/16
 apiServerExtraArgs:
   basic-auth-file: /etc/kubernetes/basic_auth.csv
