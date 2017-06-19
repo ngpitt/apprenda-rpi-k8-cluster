@@ -15,7 +15,7 @@ sudo kubeadm init --config config.yaml
 sudo cp /etc/kubernetes/admin.conf $HOME/.kubeconfig
 sudo chown $(id -u):$(id -g) $HOME/.kubeconfig
 kubectl apply -f kube-flannel-rbac.yaml
-kubectl apply -f kube-clannel.yaml
+kubectl apply -f kube-flannel.yaml
 
 echo "
 Waiting for Kubernetes DNS..."
