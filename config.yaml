@@ -1,5 +1,6 @@
 apiVersion: kubeadm.k8s.io/v1alpha1
 kind: MasterConfiguration
+kubernetesVersion: v1.6.4
 authorizationMode: ABAC
 networking:
   podSubnet: 10.244.0.0/16
