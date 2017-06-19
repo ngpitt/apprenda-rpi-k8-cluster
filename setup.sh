@@ -2,9 +2,7 @@
 
 echo "
 Installing Kubernetes..."
-cp kube*.deb /tmp
-parallel-scp -h worker-nodes.txt -O StrictHostKeyChecking=no /tmp/kube*.deb /tmp
-parallel-ssh -i -h all-nodes.txt -O StrictHostKeyChecking=no -t 600 "sudo dpkg -i /tmp/kube*.deb"
+parallel-ssh -i -h all-nodes.txt -O StrictHostKeyChecking=no -t 600 "sudo apt-get install -y kubeadm=1.6.4-00 kubelet=1.6.4-00 kubectl=1.6.4-00"
 
 echo "
 Setting up Kubernetes..."
